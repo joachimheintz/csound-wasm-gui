@@ -6,6 +6,8 @@ body {
 p {
  font-size: 20px;
  font-family: "Noto sans", Helvetica, sans;
+ margin-top: 0.15em;
+ margin-bottom: 0.15em;
  }
 button {
  background-color: #AABBAA; 
@@ -13,24 +15,44 @@ button {
  height: 50px; 
  font-size: 30px;
  }
-input {
+.numbox {
  width: 100px; 
  height: 50px; 
  font-size: 30px; 
  text-align: right;
  font-family: "Lucida Console", "Courier New", monospace;
  }
+.slider {
+ width: 200px;
+ height: 20px;
+ }
+.display {
+ font-size: 20px;
+ font-family: "Lucida Console", "Courier New", monospace;
+ text-align: right;
+ }
 </style>
+
+<script>
+function setAndShow(val){
+  csound.setControlChannel("master_volume",val);
+  document.getElementById("slidervalue").innerHTML = val;
+  }
+</script>
+
 <head>
 </head>
 <body >
-  <h1>Tutorial 4: Style Sheet</h1>
-  <p>The different style properties are usually organized in a <i><b>style</i></b> tag.</p>
-  <p>This provides much better overview and let us re-use and modify properties
-    for the same elements, like buttons or sliders.</p>
-  <p>The HTML user interface is similar to Tutorial 3, but the code is much clearer.</p>
+  <h1>Tutorial 6: Javascript</h1>
+  <p>The Csound object which we use here is written in Javascript.</p>
+  <p>We introduce Javascript here to get the value of the slider back from Csound.</p>
+  <p>For this, we write a function in Javascript which does both: 
+   pass the slider value to Csound, and show it in a text field.</p>
+  <br>
   <button type=button onclick='csound.readScore("i 1 0 1");'>Click me!</button>
-  <input type=number oninput='csound.setControlChannel("base_pitch",this.value);' value="65"></input>
+  <input class="numbox" type=number oninput='csound.setControlChannel("base_pitch",this.value);' value="65"></input>
+  <input class="slider" type=range oninput='setAndShow(value)' min="-30" max="6" value="-10">
+   <span id="slidervalue" class="display">-10</span></input>
 </body>
 </html>
 
@@ -47,10 +69,10 @@ seed 0
 
 //set a default value for the channel
 chnset(65,"base_pitch")
+chnset(-10,"master_volume")
 
 instr Main
   iPitch = chnget:i("base_pitch")  //midi note numbers given from user input
-  printf_i("Base pitch = %.2f\n",1,iPitch)
   iNumTones = random:i(3,12)
   iStart = 0
   indx = 0
@@ -62,13 +84,14 @@ instr Main
 endin
 
 instr Play
+  kMasterVolume = chnget:k("master_volume") //dB
   iPitch = p4 + random:i(-6,6)
   iDb = random:i(-20,-10)
   aImp = mpulse:a(ampdb(iDb),p3+1)
   aTon_1 = mode:a(aImp,mtof:i(iPitch),1000)
-  aTon_2 = mode:a(aImp,mtof:i(iPitch*random:i(1.9,2.1)),1000)
+  aTon_2 = mode:a(aImp,mtof:i(iPitch)*random:i(2.9,3.1),300)
   aTon = linen:a(aTon_1+aTon_2,.003,p3,p3/2)
-  aL,aR pan2 aTon, random:i(0,1)
+  aL,aR pan2 aTon*ampdb(kMasterVolume), random:i(0,1)
   out(aL,aR)
 endin
 
@@ -76,6 +99,12 @@ endin
 <CsScore>
 </CsScore>
 </CsoundSynthesizer>
+
+
+
+
+
+
 
 
 <bsbPanel>
