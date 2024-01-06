@@ -41,31 +41,6 @@ function setAndShow(val){
 </script>
 
 <head>
-<script type="text/javascript" src="qrc:///qtwebchannel/qwebchannel.js"></script>
-<script type="text/javascript">
-"use strict";
-document.addEventListener("DOMContentLoaded", function () {
-    try {
-        console.log("Initializing window.csound...");
-        window.channel = new QWebChannel(qt.webChannelTransport, function(channel) {
-        window.csound = channel.objects.csound;
-        if (typeof window.csound === 'undefined') {
-            alert('window.csound is undefined.');
-            return;
-        }
-        if (window.csound === null) {
-            alert('window.csound is null.');
-            return;
-        }
-        csound.message("Initialized csound.\n");
-        });
-    } catch (e) {
-        alert("initialize_csound error: " + e.message);
-        console.log(e.message);
-    }
-});
-</script>
-
 </head>
 <body >
   <h1>Tutorial 6: Javascript</h1>
@@ -80,3 +55,116 @@ document.addEventListener("DOMContentLoaded", function () {
    <span id="slidervalue" class="display">-10</span></input>
 </body>
 </html>
+
+<CsoundSynthesizer>
+<CsOptions>
+-odac -m128
+</CsOptions>
+<CsInstruments>
+sr = 48000
+ksmps = 64
+nchnls = 2
+0dbfs = 1
+seed 0
+
+//set a default value for the channel
+chnset(65,"base_pitch")
+chnset(-10,"master_volume")
+
+instr Main
+  iPitch = chnget:i("base_pitch")  //midi note numbers given from user input
+  iNumTones = random:i(3,12)
+  iStart = 0
+  indx = 0
+  while (indx<iNumTones) do
+    schedule("Play",iStart,random:i(1,3),iPitch)
+    iStart += random:i(.1,.5)
+    indx += 1
+  od
+endin
+
+instr Play
+  kMasterVolume = chnget:k("master_volume") //dB
+  iPitch = p4 + random:i(-6,6)
+  iDb = random:i(-20,-10)
+  aImp = mpulse:a(ampdb(iDb),p3+1)
+  aTon_1 = mode:a(aImp,mtof:i(iPitch),1000)
+  aTon_2 = mode:a(aImp,mtof:i(iPitch)*random:i(2.9,3.1),300)
+  aTon = linen:a(aTon_1+aTon_2,.003,p3,p3/2)
+  aL,aR pan2 aTon*ampdb(kMasterVolume), random:i(0,1)
+  out(aL,aR)
+endin
+
+</CsInstruments>
+<CsScore>
+</CsScore>
+</CsoundSynthesizer>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<bsbPanel>
+ <label>Widgets</label>
+ <objectName/>
+ <x>672</x>
+ <y>232</y>
+ <width>635</width>
+ <height>380</height>
+ <visible>true</visible>
+ <uuid/>
+ <bgcolor mode="nobackground">
+  <r>255</r>
+  <g>255</g>
+  <b>255</b>
+ </bgcolor>
+</bsbPanel>
+<bsbPresets>
+</bsbPresets>
