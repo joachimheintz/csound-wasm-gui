@@ -1,0 +1,40 @@
+<html>
+<head>
+<script type="text/javascript" src="qrc:///qtwebchannel/qwebchannel.js"></script>
+<script type="text/javascript">
+"use strict";
+document.addEventListener("DOMContentLoaded", function () {
+    try {
+        console.log("Initializing window.csound...");
+        window.channel = new QWebChannel(qt.webChannelTransport, function(channel) {
+        window.csound = channel.objects.csound;
+        if (typeof window.csound === 'undefined') {
+            alert('window.csound is undefined.');
+            return;
+        }
+        if (window.csound === null) {
+            alert('window.csound is null.');
+            return;
+        }
+        csound.message("Initialized csound.\n");
+        });
+    } catch (e) {
+        alert("initialize_csound error: " + e.message);
+        console.log(e.message);
+    }
+});
+</script>
+
+</head>
+<body bgcolor="darkorange">
+  <h1>Tutorial 3: Number Input</h1>
+  <p>This tutorial introduces a number box to change the base pitch of the
+    generated tones.</p>
+  <p>It uses the HTML <i>input</i> tag which collects different elements.</p>
+  <p>An overview can be found <a href="https://www.w3schools.com/tags/tag_input.asp">here</a>.</p>
+  <p>Type a number and press return to activate it.</p>
+  <button type=button onclick='csound.readScore("i 1 0 1");' 
+    style="background-color:#AABBAA; width:150px; height:50px; font-size:30px;">Click me!</button>
+  <input type=number style="width:100px; height:50px; font-size:30px; text-align:right;"  oninput='csound.setControlChannel("base_pitch",this.value);' value="65"></input>
+</body>
+</html>

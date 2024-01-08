@@ -21,14 +21,31 @@ nchnls = 2
 0dbfs = 1
 seed 0
 
-instr Timbre
+//vielleicht noch mit slider für lautstärke?
+//varianten:
+//- pitch deviations (partials)
+//- db random range
+//- Q als 10^x 
+
+instr WineGlass
   iMidiPitch = random:i(80,90)
-  aImpulse = mpulse(1/3,p3)
   iBaseFreq = mtof:i(iMidiPitch)
-  aMode_1 = mode(aImpulse,iBaseFreq,1000)
-  //aMode_2 = mode(aImpulse,iBaseFreq*random:i(1.9,2.1),1000)
-  aMode_2 = mode(aImpulse,iBaseFreq*2*semitone(random:i(-2,2)),1000)
-  outall(aMode_1+aMode_2)
+  iQ = 1000
+  iPartials[] = fillarray(1,2.32,4.25,6.63,9.38)
+  indx = 0
+  while (indx < lenarray(iPartials)) do
+    schedule("Partial",0,p3,iBaseFreq,iPartials[indx],iQ)
+    indx += 1
+  od
+endin
+
+instr Partial
+  iBasFreq = p4
+  iMult = p5
+  iQ = p6
+  aImpulse = mpulse(1/3,p3)
+  aMode = mode(aImpulse,iBasFreq*iMult,iQ)
+  outall(aMode)
 endin
 
 
@@ -36,12 +53,6 @@ endin
 <CsScore>
 </CsScore>
 </CsoundSynthesizer>
-
-
-
-
-
-
 
 
 <bsbPanel>

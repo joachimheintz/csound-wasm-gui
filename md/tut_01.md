@@ -1,10 +1,10 @@
-# 01 Start Button
+# 01 A Button and a Resonator
 
 ## HTML and JavaScript
 
 ### The csound object
 
-WASM Csound lets us access an object which is — not surprisingly — called *csound*. We communicate with this object via different methods. They are listed in the [WASM Csound Rapository](https://github.com/csound/csound/tree/master/wasm/browser).
+WASM Csound lets us access an object which is — not surprisingly — called *csound*. We communicate with this object via different methods. They are listed in the [WASM Csound Repository](https://github.com/csound/csound/tree/master/wasm/browser).
 
 If we use Csound for Android, or CsoundQt, we can access the Csound Object directly in a HTML tag as part of the .csd file. If you use Csound in a JavaScript environment, you find good introductions in the Tutorials of Yi/Sigurdsson and Lazzarini.
 

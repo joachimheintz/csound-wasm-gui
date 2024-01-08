@@ -5,7 +5,7 @@
   <p>The background color can be set, and the color of elements. 
     (See <a href="https://www.w3schools.com/tags/ref_colornames.asp">here</a> for the HTML colors.)</p>
   <p>The size of the button can be set, and its text size.</p>
-  <button type=button onclick='csound.readScore("i 1 0 5")' 
+  <button type=button onclick='csound.readScore("i 1 0 30")' 
     style="background-color:#AABBAA; width:150px; height:50px; font-size:30px;">Click me!</button>
 </body>
 </html>
@@ -21,14 +21,41 @@ nchnls = 2
 0dbfs = 1
 seed 0
 
-instr Timbre
+//Q als element aus einem array auswählen
+//(bewusst ein element doppelt)
+//dann noch zufällige variationen darauf anwenden
+
+instr WineGlass
   iMidiPitch = random:i(80,90)
-  aImpulse = mpulse(1/3,p3)
+  iDb = random:i(-20,0)
+  iPartials[] = fillarray(1,2.32,4.25,6.63,9.38)
   iBaseFreq = mtof:i(iMidiPitch)
-  aMode_1 = mode(aImpulse,iBaseFreq,1000)
-  //aMode_2 = mode(aImpulse,iBaseFreq*random:i(1.9,2.1),1000)
-  aMode_2 = mode(aImpulse,iBaseFreq*2*semitone(random:i(-2,2)),1000)
-  outall(aMode_1+aMode_2)
+  iQs[] = fillarray(50,100,500,1000,1000,10000)
+  iQ_indx = int(random:i(0,lenarray(iQs)-0.0001))
+  indx = 0
+  while (indx < lenarray(iPartials)) do
+    schedule("Partial",0,p3,iBaseFreq,iPartials[indx],iQs[iQ_indx],iDb)
+    indx += 1
+  od
+endin
+
+instr Partial
+  iBasFreq = p4
+  iMult = p5
+  iQ = p6
+  print(iQ)
+  iDb = p7
+  iDevMult = (iMult == 1) ? 1 : semitone(random:i(-2,2))
+  iQ *= 2^random:i(-1,1)
+  print(iQ)
+  aImpulse = mpulse(1/3,p3)
+  aMode = mode(aImpulse,iBasFreq*iMult*iDevMult,iQ)
+  outall(aMode)
+  
+  kRms = rms(aMode)
+  if (timeinsts:k() > 0.2) && (kRms < ampdb(-80)) then
+    turnoff
+  endif
 endin
 
 
@@ -36,14 +63,6 @@ endin
 <CsScore>
 </CsScore>
 </CsoundSynthesizer>
-
-
-
-
-
-
-
-
 <bsbPanel>
  <label>Widgets</label>
  <objectName/>

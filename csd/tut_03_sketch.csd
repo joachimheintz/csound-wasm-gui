@@ -21,14 +21,19 @@ nchnls = 2
 0dbfs = 1
 seed 0
 
-instr Timbre
+instr Timbre_Array
   iMidiPitch = random:i(80,90)
   aImpulse = mpulse(1/3,p3)
   iBaseFreq = mtof:i(iMidiPitch)
-  aMode_1 = mode(aImpulse,iBaseFreq,1000)
-  //aMode_2 = mode(aImpulse,iBaseFreq*random:i(1.9,2.1),1000)
-  aMode_2 = mode(aImpulse,iBaseFreq*2*semitone(random:i(-2,2)),1000)
-  outall(aMode_1+aMode_2)
+  iQ = 1000
+  iPartials[] = fillarray(1,2.32,4.25,6.63,9.38)
+  aMode_1 = mode(aImpulse,iBaseFreq*iPartials[0],iQ)
+  aMode_2 = mode(aImpulse,iBaseFreq*iPartials[1],iQ)
+  aMode_3 = mode(aImpulse,iBaseFreq*iPartials[2],iQ)
+  aMode_4 = mode(aImpulse,iBaseFreq*iPartials[3],iQ)
+  aMode_5 = mode(aImpulse,iBaseFreq*iPartials[4],iQ)
+  aMode = sum:a(aMode_1,aMode_2,aMode_3,aMode_4,aMode_5)
+  outall(aMode)
 endin
 
 
